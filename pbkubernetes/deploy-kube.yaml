@@ -1,0 +1,25 @@
+---
+
+#- name: deploy common tasks
+#  hosts: all
+#  gather_facts: true
+#  roles:
+#    - common
+
+#- name: deploy nfs server
+#  hosts: nfs
+#  gather_facts: true
+#  roles:
+#    - nfs
+
+- name: deploy common kubernetes config
+  hosts: all
+  gather_facts: true
+  roles:
+    - kubernetes-common
+    
+#- name: tests instalacion 
+#  hosts: all
+#  gather_facts: true
+#  roles:
+#    - tests

@@ -1,0 +1,60 @@
+---
+# roles/kubernetes-common/tasks
+
+- name: activar transparent masquerading vxlan protocol
+  command: modprobe br_netfilter 
+  become: yes
+  
+- name: activar transparent masquerading vxlan protocol
+  command: modprobe br_netfilter 
+  become: yes
+  
+- name: activar transparent masquerading en firewall-cmd
+  command: firewall-cmd --add-masquerade --permanent 
+  become: yes
+  ignore_errors: true
+
+- name: reload firewall-cmd
+  command: firewall-cmd --reload 
+  become: yes
+  ignore_errors: true
+  
+- name: mejoras configuracion - sysctl k8s.conf
+  copy:
+    src: files/k8s.conf 
+    dest: /etc/sysctl.d/k8s.conf
+    owner: root
+    group: root
+  become: yes
+  
+- name: aplicando cambios en el sistema
+  command: sysctl --system 
+  become: yes
+
+- name: deshabilitar memoria swap
+  command: swapoff -a
+  become: yes
+
+- name: deshabilitar memoria swap en fstab
+  lineinfile: 
+    dest: /etc/fstab
+    regexp: '^(.*)swap(.*)$'
+    state: absent
+    backrefs: yes
+  become: yes
+
+- name: añadir el repositorio de packetes de docker cd
+  command: dnf config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
+  become: yes
+
+- name: instalar docker 19.03 y containerd
+  command: dnf install docker-ce-19.03.14-3.el8 containerd.io -y
+  become: yes  
+
+- name: habilidar el servicio de docker 
+  command: systemctl enable docker
+  become: yes    
+
+- name: iniciar docker 
+  command: systemctl start docker
+  become: yes    

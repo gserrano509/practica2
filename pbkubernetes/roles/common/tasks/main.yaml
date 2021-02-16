@@ -1,0 +1,30 @@
+---
+# roles/common/tasks
+- name: zona horaria Madrid
+  command: timedatectl set-timezone Europe/Madrid
+  become: yes
+
+- name: instalar paquetes comunes (chrony,nfs...)
+  dnf:
+    name: "{{ common_rpms }}"
+    state: present
+  become: yes
+  when: ansible_os_family == 'RedHat'
+  
+- name: habilitar chrony en systemd
+  systemd:
+    name: chronyd
+    state: started
+    enabled: yes
+
+- name: sincronizacion horaria
+  command: timedatectl set-ntp true
+  become: yes
+  
+- name: desabilitar SElinux
+  lineinfile: 
+    path: /etc/selinux/config
+    regexp: '^(.*)SELINUX=(.*)$'
+    line: SELINUX=disabled
+    backrefs: yes
+  become: yes

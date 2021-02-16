@@ -1,0 +1,59 @@
+---
+#roles/nfs/tasks
+- name: instalar servidor nfs server
+  dnf:
+    name: "{{ common_rpms }}"
+    state: present
+  become: yes
+  when: ansible_os_family == 'RedHat'
+  
+- name: habilitar nfs server
+  systemd:
+    name: nfs-server
+    state: started
+    enabled: yes
+  become: yes
+
+- name: crear directorio a compartir
+  file:
+    path: "{{ share_dir }}"
+    state: directory
+    mode: '0775'
+  become: yes  
+
+- name: generar el fichero con los exports de nfs
+  copy:
+    src: files/exports
+    dest: /etc/exports
+    owner: root
+    group: root
+  become: yes
+
+- name: aplicar la configuracion de exports -r
+  command: exportfs -r
+  become: yes
+
+- name: aplicar la configuracion de exports -s
+  command: exportfs -s
+  become: yes  
+
+- name: firewall - exponer el servcio nfs
+  command: firewall-cmd --permanent --add-service=nfs
+  become: yes
+  ignore_errors: true    
+
+- name: firewall - exponer el servicio rpc-bind
+  command: firewall-cmd --permanent --add-service=rpc-bind
+  become: yes
+  ignore_errors: true      
+
+- name: firewall - exponer el servicio mountd
+  command: firewall-cmd --permanent --add-service=mountd
+  become: yes
+  ignore_errors: true  
+
+- name: firewall - recargar la configuracion
+  command: firewall-cmd --reload
+  become: yes
+  ignore_errors: true
+   

@@ -1,0 +1,3 @@
+/srv/nfs	master.local(rw,sync)
+/srv/nfs	worker1.local(rw,sync)
+/srv/nfs	worker2.local(rw,sync)
