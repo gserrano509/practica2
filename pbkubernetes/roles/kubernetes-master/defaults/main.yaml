@@ -5,4 +5,4 @@
 # These variables have the lowest priority of any variables available,
 # and can be easily#overridden by any other variable, including inventory variables.
 
-pod_network_cidr: "192.168.0.0/16"
+pod_network_cidr: "172.20.0.0/16"

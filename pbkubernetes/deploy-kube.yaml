@@ -1,32 +1,32 @@
 ---
 
-#- name: deploy common tasks
-#  hosts: all
-#  gather_facts: true
-#  roles:
-#    - common
+- name: deploy common tasks
+  hosts: all
+  gather_facts: true
+  roles:
+    - common
 
-#- name: deploy nfs server
-#  hosts: nfs
-#  gather_facts: true
-#  roles:
-#    - nfs
+- name: deploy nfs server
+  hosts: nfs
+  gather_facts: true
+  roles:
+    - nfs
 
-#- name: deploy common kubernetes config
-#  hosts: master,workers
-#  gather_facts: true
-#  roles:
-#    - kubernetes-common
+- name: deploy common kubernetes config
+  hosts: master,workers
+  gather_facts: true
+  roles:
+    - kubernetes-common
 
 - name: deploy kubernetes master y workers
   hosts: master
   gather_facts: true
   roles:
-    #- kubernetes-master
-    #- kubernetes-workers
+    - kubernetes-master
+    - kubernetes-workers
     - kubernetes-user
  
-#profesos quiere
+#profesor quiere
 #Tareas comunes a realizar en el nodo master y los workers
 #Configurando kubernetes en el nodo master
 #Instalando la SDN

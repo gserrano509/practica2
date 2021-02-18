@@ -3,7 +3,8 @@
   # creamos la red de pods y almacenamos la salida en una variable para mostrarla, ya que se necesita la salida de este comando
   # para hacer el cluster de kubernetes
 - name: iniciar el control-plane de kubernetes y la red para los pods
-  command: kubeadm init --apiserver-advertise-address=10.0.2.15 --pod-network-cidr "{{ pod_network_cidr }}"
+  command: kubeadm init --pod-network-cidr "{{ pod_network_cidr }}"
+  #command: kubeadm init --apiserver-advertise-address=10.0.2.15 --pod-network-cidr "{{ pod_network_cidr }}"
   register: kubeadm_var
   delegate_to: 127.0.0.1
   become: yes  
@@ -11,7 +12,6 @@
 - name: generando token para conectar los workers al cluster
   command: kubeadm token create --print-join-command
   register: kubeadm_token_join
-  delegate_to: 127.0.0.1
   become: yes
 
 - name: mostrar token para conectar los workers al cluster
