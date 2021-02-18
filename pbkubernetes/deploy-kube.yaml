@@ -22,6 +22,13 @@
   hosts: master
   gather_facts: true
   roles:
-    - kubernetes-master
-    - kubernetes-workers
+    #- kubernetes-master
+    #- kubernetes-workers
+    - kubernetes-user
  
+#profesos quiere
+#Tareas comunes a realizar en el nodo master y los workers
+#Configurando kubernetes en el nodo master
+#Instalando la SDN
+#Configurando los workers
+#Desplegando un ingress controller

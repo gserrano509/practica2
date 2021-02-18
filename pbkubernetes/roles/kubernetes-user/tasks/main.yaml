@@ -1,0 +1,44 @@
+---
+# roles/kubernetes-user/tasks
+
+- name: crear el usuario "{{user}}" para gestionar kubernetes
+  user:
+    name: "{{user}}"
+    shell: /bin/bash
+    generate_ssh_key: yes
+    ssh_key_bits: 2048
+    ssh_key_file: .ssh/id_rsa
+    comment: usuario kubernetes
+  become: yes
+ 
+- name: crear directorio /home/{{ user }}/.kube
+  file:
+    path: /home/{{ user }}/.kube
+    state: directory
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: '770'
+  become: yes
+
+- name: copiar el directorio de configuracion /etc/kubernetes/admin.conf a /home/{{ user }}/.kube/config 
+  command: cp /etc/kubernetes/admin.conf /home/"{{ user }}"/.kube/config 
+  args:
+    warn: false
+  become: yes  
+  
+- name: configuracion de permisos sobre /home/{{ user }}/.kube/config
+  file:
+    path: /home/{{ user }}/.kube/config
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: '660'
+  become: yes  
+
+- name: fichero sudoer en /etc/sudoers.d/200-{{user}}
+  copy:
+    content: '{{user}} ALL=(ALL) NOPASSWD:ALL'
+    dest: /etc/sudoers.d/{{user}}
+    remote_src: yes
+    validate: /usr/sbin/visudo -csf %s
+  become: yes  
+  
