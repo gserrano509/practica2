@@ -1,0 +1,12 @@
+---
+# roles/kubernetes-workers/tasks
+
+- name: configurar el firewall
+  command: firewall-cmd --zone=public --permanent --add-port={10250,30000-32767}/tcp 
+  become: yes
+  ignore_errors: true
+
+- name: activar los cambios
+  command: firewall-cmd --reload 
+  become: yes
+  ignore_errors: true    

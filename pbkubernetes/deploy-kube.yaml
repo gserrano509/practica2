@@ -12,14 +12,16 @@
 #  roles:
 #    - nfs
 
-- name: deploy common kubernetes config
-  hosts: all
-  gather_facts: true
-  roles:
-    - kubernetes-common
-    
-#- name: tests instalacion 
-#  hosts: all
+#- name: deploy common kubernetes config
+#  hosts: master,workers
 #  gather_facts: true
 #  roles:
-#    - tests
+#    - kubernetes-common
+
+- name: deploy kubernetes master y workers
+  hosts: master
+  gather_facts: true
+  roles:
+    - kubernetes-master
+    - kubernetes-workers
+ 

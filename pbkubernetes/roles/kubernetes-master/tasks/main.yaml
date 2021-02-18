@@ -1,0 +1,58 @@
+---
+# roles/kubernetes-master/tasks
+  # creamos la red de pods y almacenamos la salida en una variable para mostrarla, ya que se necesita la salida de este comando
+  # para hacer el cluster de kubernetes
+- name: iniciar el control-plane de kubernetes y la red para los pods
+  command: kubeadm init --apiserver-advertise-address=10.0.2.15 --pod-network-cidr "{{ pod_network_cidr }}"
+  register: kubeadm_var
+  delegate_to: 127.0.0.1
+  become: yes  
+  
+- name: debug kubeadm init config
+  debug: 
+    msg: "{{ kubeadm_var.stdout.split('\n') }}"
+  delegate_to: 127.0.0.1
+
+- name: registrando usuario
+  command: whoami
+  register: user
+  delegate_to: 127.0.0.1
+
+- name: cluster config directorio
+  file:
+    path: $HOME/.kube
+    state: directory
+    mode: '775'
+
+# no se puede usar el modulo copy ya que el direcorio /etc/kubernetes/admin.conf
+# tiene los permisos 600 y no pude ser leido por un usuario no root      
+- name: cluster config copiar el directorio de configuracion
+  command: cp /etc/kubernetes/admin.conf /home/"{{ user.stdout }}"/.kube/config 
+  become: yes
+  args:
+    warn: false
+  
+
+- name: configuracion de permisos sobre /home/{{ user.stdout }}/.kube/config
+  file:
+    path: /home/{{ user.stdout }}/.kube/config
+    owner: "{{ user.stdout }}"
+    group: "{{ user.stdout }}"
+    mode: '660'
+  become: yes
+
+- name: instalando SDN (calico)
+  command: kubectl create -f https://docs.projectcalico.org/manifests/tigera-operator.yaml
+
+- name: obteniendo  los custom resources para calico
+  get_url:
+    url: https://docs.projectcalico.org/manifests/custom-resources.yaml
+    dest: $HOME/.kube/custom-resources.yaml
+
+- name: instalando los custom resources para calico
+  command: kubectl apply -f $HOME/.kube/custom-resources.yaml
+
+- name: desplegando el ingress controller (haproxy)
+  command: kubectl apply -f https://raw.githubusercontent.com/haproxytech/kubernetes-ingress/v1.5/deploy/haproxy-ingress.yaml  
+  
+  

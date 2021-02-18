@@ -1,0 +1,9 @@
+---
+
+# https://docs.ansible.com/ansible/latest/user_guide/playbooks_reuse_roles.html
+# default variables for the role (see Using Variables for more information).
+# These variables have the lowest priority of any variables available,
+# and can be easily#overridden by any other variable, including inventory variables.
+
+pod_network_cidr: "192.168.0.0/16"
+prueba: "soludiosdfsod\nasdfasfasdf"
