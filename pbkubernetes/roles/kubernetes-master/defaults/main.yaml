@@ -1,8 +1,15 @@
 ---
+#file: roles/kubernetes-master/defaults
 
 # https://docs.ansible.com/ansible/latest/user_guide/playbooks_reuse_roles.html
 # default variables for the role (see Using Variables for more information).
 # These variables have the lowest priority of any variables available,
 # and can be easily#overridden by any other variable, including inventory variables.
 
+#Specify range of IP addresses for the pod network. If set, the control plane will automatically allocate CIDRs for every node.
 pod_network_cidr: "172.20.0.0/16"
+
+#The IP address the API Server will advertise it's listening on. If not set the default network interface will be used.
+apiserver_address: "192.168.5.10"
+
+

@@ -9,4 +9,14 @@
 - name: activar los cambios
   command: firewall-cmd --reload 
   become: yes
-  ignore_errors: true    
+  ignore_errors: true
+
+- name: token para conectar los workers al cluster
+  debug: 
+    msg: "{{ hostvars[master_name]['kubernetes_worker_join_cmd'] }}"
+
+- name: conectando los workers al cluster
+  command: " {{ hostvars[master_name]['kubernetes_worker_join_cmd'] }}"
+  become: yes
+
+    

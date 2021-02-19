@@ -2,30 +2,45 @@
 
 - name: deploy common tasks
   hosts: all
-  gather_facts: true
+  gather_facts: no
   roles:
     - common
 
 - name: deploy nfs server
   hosts: nfs
-  gather_facts: true
+  gather_facts: no
   roles:
     - nfs
 
 - name: deploy common kubernetes config
   hosts: master,workers
-  gather_facts: true
+  gather_facts: no
   roles:
     - kubernetes-common
 
-- name: deploy kubernetes master y workers
+- name: deploy kubernetes master
   hosts: master
-  gather_facts: true
+  gather_facts: no
   roles:
     - kubernetes-master
-    - kubernetes-workers
     - kubernetes-user
- 
+
+- name: deploy kubernetes workers
+  hosts: workers
+  gather_facts: no 
+  roles:
+    - kubernetes-workers
+  
+
+
+#https://docs.ansible.com/ansible/latest/user_guide/playbooks_variables.html#variable-examples
+#poner las variables en group all y los valores por defecto
+
+   #para maxima clsridad
+   #- role: apache
+   #  vars:
+   #     http_port: 8080
+
 #profesor quiere
 #Tareas comunes a realizar en el nodo master y los workers
 #Configurando kubernetes en el nodo master

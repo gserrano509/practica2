@@ -6,6 +6,7 @@
     state: present
   become: yes
   when: ansible_os_family == 'RedHat'
+  ignore_errors: true # con gather facts=false arraoja error
   
 - name: habilitar nfs server
   systemd:

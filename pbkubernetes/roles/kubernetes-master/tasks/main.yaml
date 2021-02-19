@@ -1,29 +1,15 @@
 ---
-# roles/kubernetes-master/tasks
-  # creamos la red de pods y almacenamos la salida en una variable para mostrarla, ya que se necesita la salida de este comando
-  # para hacer el cluster de kubernetes
-- name: iniciar el control-plane de kubernetes y la red para los pods
-  command: kubeadm init --pod-network-cidr "{{ pod_network_cidr }}"
-  #command: kubeadm init --apiserver-advertise-address=10.0.2.15 --pod-network-cidr "{{ pod_network_cidr }}"
-  register: kubeadm_var
-  delegate_to: 127.0.0.1
-  become: yes  
-  
-- name: generando token para conectar los workers al cluster
-  command: kubeadm token create --print-join-command
-  register: kubeadm_token_join
-  become: yes
+# file: roles/kubernetes-master/tasks
 
-- name: mostrar token para conectar los workers al cluster
-  debug: 
-    msg: "{{ kubeadm_token_join.stdout }}"
-  delegate_to: 127.0.0.1
+- name: iniciar el control-plane de kubernetes y la red para los pods
+  command: kubeadm init --apiserver-advertise-address={{ apiserver_address }} --pod-network-cidr "{{ pod_network_cidr }}"
+  become: yes  
 
 - name: registrando usuario
   command: whoami
   register: user
   delegate_to: 127.0.0.1
-
+  
 - name: cluster config directorio
   file:
     path: $HOME/.kube
@@ -56,11 +42,27 @@
     url: https://docs.projectcalico.org/manifests/custom-resources.yaml
     dest: $HOME/.kube/custom-resources.yaml
 
+#reemplaza la red por defecto con la red de la variable  "pod_network_cidr"
+- name: customizando custom-resources.yaml con red de los pods
+  replace:
+    path: $HOME/.kube/custom-resources.yaml
+    regexp: '(?:[0-9]{1,3}\.){3}[0-9]{1,3}\/[1-9]{2}'
+    replace: "{{ pod_network_cidr }}"
+    backup: yes  
+  
 - name: instalando los custom resources para calico
   command: kubectl apply -f $HOME/.kube/custom-resources.yaml
+  ignore_errors: yes
 
 - name: desplegando el ingress controller (haproxy)
-  command: kubectl apply -f https://raw.githubusercontent.com/haproxytech/kubernetes-ingress/v1.5/deploy/haproxy-ingress.yaml  
-
+  command: kubectl apply -f https://raw.githubusercontent.com/haproxytech/kubernetes-ingress/v1.5/deploy/haproxy-ingress.yaml
+  ignore_errors: yes 
   
+- name: generando token para conectar los workers al cluster
+  command: kubeadm token create --print-join-command
+  register: kubernetes_worker_join_cmd
+  become: yes
+
+- name: Exportar el comando para unir los workers a una variable de tipo 'host-fact
+  set_fact: kubernetes_worker_join_cmd={{ kubernetes_worker_join_cmd.stdout }}
   

@@ -43,15 +43,28 @@
     backrefs: yes
   become: yes
 
-- name: instalar docker 19.03 y containerd
+#- name: instalar docker 19.03
+#  dnf:
+#    name:
+#      - docker-ce-19.03.14-3.el8
+#      - containerd.io
+#    enablerepo: https://download.docker.com/linux/centos/docker-ce.repo
+#    state: present
+#  become: yes  
+
+- name: instalar repositorio de docker
+  command: dnf config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
+  become: yes
+  args:
+    warn: false
+
+- name: instalar docker 19.03
   dnf:
     name:
       - docker-ce-19.03.14-3.el8
-      - containerd.io
-    enablerepo: https://download.docker.com/linux/centos/docker-ce.repo
     state: present
   become: yes  
-
+         
 - name: habilitar el servicio de docker
   systemd:
     name: docker
@@ -72,10 +85,11 @@
     name:
       - kubelet
       - kubeadm
+      - kubectl
     disable_excludes: kubernetes
     state: present
   become: yes
-  #install kubelet kubeadm kubectl --disableexcludes=kubernetes -y
+  #dnf install kubelet kubeadm kubectl --disableexcludes=kubernetes -y
 
 - name: habilitar servicio kubernetes
   systemd:
