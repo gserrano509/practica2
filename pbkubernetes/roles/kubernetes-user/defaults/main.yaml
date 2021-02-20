@@ -6,4 +6,7 @@
 # and can be easily#overridden by any other variable, including inventory variables.
 
 #usuario del sistema para gestionar el entorno de kubernetes
-kubeuser: "kubeadmin"
+kubeuser_name: "kubeadmin"
+
+#password del sistema para gestionar el entorno de kubernetes
+kubeuser_password: "kubeadmin"

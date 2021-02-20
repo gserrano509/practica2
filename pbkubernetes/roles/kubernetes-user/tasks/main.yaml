@@ -1,43 +1,44 @@
 ---
-# roles/kubernetes-kubeuser/tasks
+# roles/kubernetes-kubeuser_name/tasks
 
-- name: crear el usuario "{{ kubeuser }}" para gestionar kubernetes
+- name: crear el usuario "{{ kubeuser_name }}" para gestionar kubernetes
   user:
-    name: "{{kubeuser}}"
+    name: "{{kubeuser_name}}"
     shell: /bin/bash
     generate_ssh_key: yes
     ssh_key_bits: 2048
     ssh_key_file: .ssh/id_rsa
+    password: "{{ kubeuser_password }}"
     comment: usuario kubernetes
   become: yes
  
-- name: crear directorio /home/{{ kubeuser }}/.kube
+- name: crear directorio /home/{{ kubeuser_name }}/.kube
   file:
-    path: /home/{{ kubeuser }}/.kube
+    path: /home/{{ kubeuser_name }}/.kube
     state: directory
-    owner: "{{ kubeuser }}"
-    group: "{{ kubeuser }}"
+    owner: "{{ kubeuser_name }}"
+    group: "{{ kubeuser_name }}"
     mode: '770'
   become: yes
 
-#- name: copiar el directorio de configuracion /etc/kubernetes/admin.conf a /home/{{ kubeuser }}/.kube/config 
-#  command: cp /etc/kubernetes/admin.conf /home/"{{ kubeuser }}"/.kube/config 
-#  args:
-#    warn: false
-#  become: yes  
+- name: copiar el directorio de configuracion /etc/kubernetes/admin.conf a /home/{{ kubeuser_name }}/.kube/config 
+  command: cp /etc/kubernetes/admin.conf /home/"{{ kubeuser_name }}"/.kube/config 
+  args:
+    warn: false
+  become: yes  
   
-- name: configuracion de permisos sobre /home/{{ kubeuser }}/.kube/config
+- name: configuracion de permisos sobre /home/{{ kubeuser_name }}/.kube/config
   file:
-    path: /home/{{ kubeuser }}/.kube/config
-    owner: "{{ kubeuser }}"
-    group: "{{ kubeuser }}"
+    path: /home/{{ kubeuser_name }}/.kube/config
+    owner: "{{ kubeuser_name }}"
+    group: "{{ kubeuser_name }}"
     mode: '660'
   become: yes  
 
-- name: fichero sudoer en /etc/sudoers.d/200-{{kubeuser}}
+- name: fichero sudoer en /etc/sudoers.d/200-{{kubeuser_name}}
   copy:
-    content: '{{kubeuser}} ALL=(ALL) NOPASSWD:ALL'
-    dest: /etc/sudoers.d/{{kubeuser}}
+    content: '{{kubeuser_name}} ALL=(ALL) NOPASSWD:ALL'
+    dest: /etc/sudoers.d/{{kubeuser_name}}
     remote_src: yes
     validate: /usr/sbin/visudo -csf %s
   become: yes  
