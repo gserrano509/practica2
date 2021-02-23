@@ -1,0 +1,15 @@
+---
+
+# https://docs.ansible.com/ansible/latest/user_guide/playbooks_reuse_roles.html
+# default variables for the role (see Using Variables for more information).
+# These variables have the lowest priority of any variables available,
+# and can be easily#overridden by any other variable, including inventory variables.
+
+# namespace de la aplicacion
+namespace: "webapp"
+
+# nombre de la aplicacion
+app_name: "app-2048"
+
+# ficher aplicacion yaml
+path_app_yaml: "/home/ansible/practica2/pbkubernetes/first-app/first-deploy.yaml"

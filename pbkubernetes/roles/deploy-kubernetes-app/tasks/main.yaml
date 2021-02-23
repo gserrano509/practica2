@@ -1,0 +1,8 @@
+---
+# file: roles/deploy-kubernetes-app/tasks
+
+- name: crear el namespace "{{namespace}}" para la aplicacion "{{app_name}}"
+  command: kubectl create namespace {{ namespace }}
+
+- name: desplegando la aplicacion {{ app_names }}
+  command: kubectl apply -f "{{ path_app_yaml }}"  

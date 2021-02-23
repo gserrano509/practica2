@@ -8,29 +8,34 @@
 
 - name: deploy nfs server
   hosts: nfs
-  gather_facts: no
+  gather_facts: yes
   roles:
     - nfs
 
 - name: deploy common kubernetes config
   hosts: master,workers
-  gather_facts: no
+  gather_facts: yes
   roles:
     - kubernetes-common
 
 - name: deploy kubernetes master
   hosts: master
-  gather_facts: no
+  gather_facts: yes
   roles:
     - kubernetes-master
     - kubernetes-user
 
 - name: deploy kubernetes workers
   hosts: workers
-  gather_facts: no 
+  gather_facts: yes 
   roles:
     - kubernetes-workers
-  
+
+- name: deploy kubernetes app 
+  hosts: master
+  gather_facts: yes 
+  roles:
+    - deploy-kubernetes-app  
 
 
 #https://docs.ansible.com/ansible/latest/user_guide/playbooks_variables.html#variable-examples
