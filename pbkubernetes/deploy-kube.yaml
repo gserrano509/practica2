@@ -37,18 +37,3 @@
   roles:
     - deploy-kubernetes-app  
 
-
-#https://docs.ansible.com/ansible/latest/user_guide/playbooks_variables.html#variable-examples
-#poner las variables en group all y los valores por defecto
-
-   #para maxima clsridad
-   #- role: apache
-   #  vars:
-   #     http_port: 8080
-
-#profesor quiere
-#Tareas comunes a realizar en el nodo master y los workers
-#Configurando kubernetes en el nodo master
-#Instalando la SDN
-#Configurando los workers
-#Desplegando un ingress controller
